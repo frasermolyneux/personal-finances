@@ -1,0 +1,5 @@
+subscription_id         = "d68448b0-9947-46d7-8771-baa331a3063a"
+resource_group_name     = "rg-tf-personal-finances-dev-uksouth-01"
+storage_account_name    = "sat48am9vfkbtm5ea"
+container_name          = "tfstate"
+key                     = "terraform.tfstate"
