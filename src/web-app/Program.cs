@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Identity.Web;
 
-namespace personal_finances
+namespace PersonalFinances.WebApp
 {
     public class Program
     {

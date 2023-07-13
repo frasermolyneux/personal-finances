@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 
-using personal_finances.Shared;
+using PersonalFinances.Abstractions;
 
-namespace personal_finances.Server.Controllers
+namespace PersonalFinances.WebApp.Controllers
 {
     [Authorize]
     [ApiController]

@@ -1,4 +1,4 @@
-namespace personal_finances.Shared
+namespace PersonalFinances.Abstractions
 {
     public class WeatherForecast
     {
