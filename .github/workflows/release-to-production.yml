@@ -2,10 +2,15 @@ name: Release to Production
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 permissions:
   id-token: write # This is required for requesting the JWT
-  contents: read  # This is required for actions/checkout
+  contents: read # This is required for actions/checkout
+  actions: read # Required by CodeQL
+  security-events: write # Required by CodeQL
 
 jobs:
   terraform-plan-and-apply-dev:
