@@ -23,6 +23,7 @@ resource "azurerm_linux_web_app" "app" {
   service_plan_id = azurerm_service_plan.app[each.value].id
 
   https_only = true
+  always_on  = false // This is required as the app service plan is set to 'F1' which is not always on.
 
   app_settings = {
     "APPINSIGHTS_INSTRUMENTATIONKEY"             = azurerm_application_insights.ai[each.value].instrumentation_key
