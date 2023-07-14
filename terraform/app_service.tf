@@ -3,7 +3,7 @@
 resource "azurerm_service_plan" "app" {
   for_each = toset(var.locations)
 
-  name = format("plan-%s-%s-%s", var.environment, each.value, var.instance)
+  name = format("plan-personal-finances-%s-%s-%s", var.environment, each.value, var.instance)
 
   resource_group_name = azurerm_resource_group.rg[each.value].name
   location            = azurerm_resource_group.rg[each.value].location
@@ -15,7 +15,7 @@ resource "azurerm_service_plan" "app" {
 resource "azurerm_linux_web_app" "app" {
   for_each = toset(var.locations)
 
-  name = format("app-%s-%s-%s-%s", var.environment, each.value, var.instance, random_id.environment_id.hex)
+  name = format("app-personal-finances-%s-%s-%s-%s", var.environment, each.value, var.instance, random_id.environment_id.hex)
 
   resource_group_name = azurerm_resource_group.rg[each.value].name
   location            = azurerm_resource_group.rg[each.value].location
