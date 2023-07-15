@@ -1,13 +1,14 @@
 terraform {
-  required_version = ">= 1.4.6"
+  required_version = ">= 1.5.3"
 
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.58.0"
+      version = "~> 3.65.0"
     }
     azapi = {
-      source = "azure/azapi"
+      source  = "azure/azapi"
+      version = "~> 0.2.0"
     }
   }
 
@@ -23,26 +24,6 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
-}
-
-provider "azurerm" {
-  alias           = "api_management"
-  subscription_id = var.api_management_subscription_id
-
-  # This is a workload repository so won't have permissions to register providers
-  skip_provider_registration = true
-
-  features {}
-}
-
-provider "azurerm" {
-  alias           = "web_apps"
-  subscription_id = var.web_apps_subscription_id
-
-  # This is a workload repository so won't have permissions to register providers
-  skip_provider_registration = true
-
-  features {}
 }
 
 provider "azurerm" {

@@ -39,6 +39,8 @@ namespace PersonalFinances.WebApp
 
             app.UseRouting();
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
 
