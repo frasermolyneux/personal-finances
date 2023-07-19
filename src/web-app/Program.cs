@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Identity.Web;
 
 namespace PersonalFinances.WebApp
@@ -42,7 +40,6 @@ namespace PersonalFinances.WebApp
             app.UseAuthentication();
 
             app.UseAuthorization();
-
 
             app.MapRazorPages();
             app.MapControllers();
