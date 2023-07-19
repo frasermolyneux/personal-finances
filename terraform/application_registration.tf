@@ -78,7 +78,7 @@ locals {
     "https://localhost:7255/authentication/login-callback"
   ]
 
-  remote_redirect_uris = [for web_app in azurerm_linux_web_app.app : format("https://%s/authentication/login-callback", web_app.default_hostname)]
+  remote_redirect_uris = [for location in toset(var.locations) : format("https://app-personal-finances-%s-%s-%s-%s.azurewebsites.net/authentication/login-callback", var.environment, location, var.instance, random_id.environment_id.hex)]
 
   redirect_uris = concat(local.local_redirect_uris, local.remote_redirect_uris)
 }
