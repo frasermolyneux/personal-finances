@@ -34,7 +34,6 @@ resource "azurerm_linux_web_app" "app" {
     "AzureAd__TenantId"                          = data.azurerm_client_config.current.tenant_id
     "AzureAd__ClientId"                          = azuread_application.finances_api.application_id
     "AzureAd__ClientSecret"                      = format("@Microsoft.KeyVault(VaultName=%s;SecretName=%s)", azurerm_key_vault.kv[each.value].name, azurerm_key_vault_secret.app_registration_client_secret[each.value].name)
-    "AzureAd__Audience"                          = format("api://%s", local.app_registration_name)
   }
 
   site_config {

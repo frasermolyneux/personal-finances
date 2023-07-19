@@ -70,6 +70,19 @@ resource "azuread_application_password" "app_password_primary" {
   }
 }
 
+locals {
+  local_redirect_uris = [
+    "http://localhost:5126/authentication/login-callback",
+    "http://localhost:6445/authentication/login-callback",
+    "https://localhost:44346/authentication/login-callback",
+    "https://localhost:7255/authentication/login-callback"
+  ]
+
+  remote_redirect_uris = [for web_app in azurerm_linux_web_app.app : format("https://%s/authentication/login-callback", web_app.default_hostname)]
+
+  redirect_uris = concat(local.local_redirect_uris, local.remote_redirect_uris)
+}
+
 resource "azuread_application" "finances_api_client" {
   display_name = local.app_registration_name_client
 
@@ -88,12 +101,7 @@ resource "azuread_application" "finances_api_client" {
   }
 
   single_page_application {
-    redirect_uris = [
-      "http://localhost:5126/authentication/login-callback",
-      "http://localhost:6445/authentication/login-callback",
-      "https://localhost:44346/authentication/login-callback",
-      "https://localhost:7255/authentication/login-callback",
-    ]
+    redirect_uris = local.redirect_uris
   }
 }
 
