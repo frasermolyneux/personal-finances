@@ -35,6 +35,9 @@ resource "azurerm_linux_web_app" "app" {
     "AzureAd__ClientId"                          = azuread_application.finances_api.application_id
     "AzureAd__ClientSecret"                      = format("@Microsoft.KeyVault(VaultName=%s;SecretName=%s)", azurerm_key_vault.kv[each.value].name, azurerm_key_vault_secret.app_registration_client_secret[each.value].name)
 
+    // App Data Storage Account
+    "appdata_connectionstring" = format("@Microsoft.KeyVault(VaultName=%s;SecretName=%s)", azurerm_key_vault.kv[each.value].name, azurerm_key_vault_secret.appdata_connectionstring[each.value].name)
+
     // Client Settings that are exposed via API to the Blazor Web Assembly
     "ClientAzureAd__ClientId"  = azuread_application.finances_api_client.application_id
     "ClientAzureAd__Authority" = "https://login.microsoftonline.com/molyneux.io"
