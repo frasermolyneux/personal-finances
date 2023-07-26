@@ -170,7 +170,7 @@ jobs:
       matrix:
         func_app: ${{ fromJSON(needs.terraform-plan-and-apply-prd.outputs.func_apps) }}
 
-        needs: [apps-ci, terraform-plan-and-apply-prd]
+    needs: [apps-ci, terraform-plan-and-apply-prd]
 
     steps:
       - uses: actions/checkout@v3
