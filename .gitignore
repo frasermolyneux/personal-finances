@@ -400,3 +400,8 @@ FodyWeavers.xsd
 # Terraform
 .terraform
 .terraform.lock.hcl
+
+# Azurite
+__blobstorage__
+__azurite_db_blob__*
+__azurite_db_table__*
