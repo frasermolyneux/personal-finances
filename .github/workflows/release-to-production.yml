@@ -13,7 +13,7 @@ permissions:
   security-events: write # Required by CodeQL
 
 jobs:
-  dotnet-web-ci:
+  apps-ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +22,12 @@ jobs:
     - uses: frasermolyneux/actions/dotnet-web-ci@main
       with:
         dotnet-project: "web-app"
+        dotnet-version: 7.0.x
+        src-folder: "src"
+
+    - uses: frasermolyneux/actions/dotnet-func-ci@main
+      with:
+        dotnet-project: "func-app"
         dotnet-version: 7.0.x
         src-folder: "src"
 
@@ -46,6 +52,7 @@ jobs:
         run: |
           cd terraform
           echo "web_apps=$(terraform output -json web_apps)" >> $GITHUB_OUTPUT
+          echo "func_apps=$(terraform output -json func_apps)" >> $GITHUB_OUTPUT
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -54,6 +61,7 @@ jobs:
 
     outputs:
       web_apps: ${{ steps.terraform-output.outputs.web_apps }}
+      func_apps: ${{ steps.terraform-output.outputs.func_apps }}
 
   app-service-deploy-dev:
     environment: Development
@@ -63,7 +71,7 @@ jobs:
       matrix:
         web_app: ${{ fromJSON(needs.terraform-plan-and-apply-dev.outputs.web_apps) }}
 
-    needs: [dotnet-web-ci, terraform-plan-and-apply-dev]
+    needs: [apps-ci, terraform-plan-and-apply-dev]
 
     steps:
       - uses: actions/checkout@v3
@@ -73,6 +81,27 @@ jobs:
           web-artifact-name: "web-app"
           web-app-name: ${{ matrix.web_app.name }}
           resource-group-name: ${{ matrix.web_app.resource_group_name }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  func-app-deploy-dev:
+    environment: Development
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-dev.outputs.func_apps) }}
+
+    needs: [apps-ci, terraform-plan-and-apply-dev]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: frasermolyneux/actions/deploy-function-app@main
+        with:
+          function-app-artifact-name: "func-app"
+          function-app-name: ${{ matrix.func_app.name }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -100,6 +129,7 @@ jobs:
         run: |
           cd terraform
           echo "web_apps=$(terraform output -json web_apps)" >> $GITHUB_OUTPUT
+          echo "func_apps=$(terraform output -json func_apps)" >> $GITHUB_OUTPUT
         env:
           ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -108,6 +138,7 @@ jobs:
 
     outputs:
       web_apps: ${{ steps.terraform-output.outputs.web_apps }}
+      func_apps: ${{ steps.terraform-output.outputs.func_apps }}
 
   app-service-deploy-prd:
     environment: Production
@@ -117,7 +148,7 @@ jobs:
       matrix:
         web_app: ${{ fromJSON(needs.terraform-plan-and-apply-prd.outputs.web_apps) }}
 
-    needs: [dotnet-web-ci, terraform-plan-and-apply-prd]
+    needs: [apps-ci, terraform-plan-and-apply-prd]
 
     steps:
       - uses: actions/checkout@v3
@@ -131,3 +162,23 @@ jobs:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           
+  func-app-deploy-prd:
+    environment: Production
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        func_app: ${{ fromJSON(needs.terraform-plan-and-apply-prd.outputs.func_apps) }}
+
+        needs: [apps-ci, terraform-plan-and-apply-prd]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: frasermolyneux/actions/deploy-function-app@main
+        with:
+          function-app-artifact-name: "func-app"
+          function-app-name: ${{ matrix.func_app.name }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

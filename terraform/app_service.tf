@@ -1,15 +1,24 @@
+resource "azurerm_resource_group" "web" {
+  for_each = toset(var.locations)
 
+  name     = format("rg-personal-finances-%s-web-%s-%s", var.environment, each.value, var.instance)
+  location = each.value
+
+  tags = var.tags
+}
 
 resource "azurerm_service_plan" "app" {
   for_each = toset(var.locations)
 
-  name = format("plan-personal-finances-%s-%s-%s", var.environment, each.value, var.instance)
+  name = format("plan-personal-finances-%s-web-%s-%s", var.environment, each.value, var.instance)
 
-  resource_group_name = azurerm_resource_group.rg[each.value].name
-  location            = azurerm_resource_group.rg[each.value].location
+  resource_group_name = azurerm_resource_group.web[each.value].name
+  location            = azurerm_resource_group.web[each.value].location
 
   os_type  = "Linux"
   sku_name = "F1"
+
+  tags = var.tags
 }
 
 resource "azurerm_linux_web_app" "app" {
@@ -17,8 +26,8 @@ resource "azurerm_linux_web_app" "app" {
 
   name = format("app-personal-finances-%s-%s-%s-%s", var.environment, each.value, var.instance, random_id.environment_id.hex)
 
-  resource_group_name = azurerm_resource_group.rg[each.value].name
-  location            = azurerm_resource_group.rg[each.value].location
+  resource_group_name = azurerm_resource_group.web[each.value].name
+  location            = azurerm_resource_group.web[each.value].location
 
   service_plan_id = azurerm_service_plan.app[each.value].id
 
@@ -58,6 +67,8 @@ resource "azurerm_linux_web_app" "app" {
   identity {
     type = "SystemAssigned"
   }
+
+  tags = var.tags
 }
 
 // This is required as when the app service is created 'basic auth' is set as disabled which is required for the SCM deploy.

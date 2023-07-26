@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "storage_account" {
-  name = format("sa%s", random_id.environment_id.hex)
+  name = format("saad%s", random_id.environment_id.hex)
 
   resource_group_name = azurerm_resource_group.rg[var.primary_location].name
   location            = azurerm_resource_group.rg[var.primary_location].location
