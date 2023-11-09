@@ -7,10 +7,7 @@ on:
       - main
 
 permissions:
-  id-token: write # This is required for requesting the JWT
   contents: read # This is required for actions/checkout
-  actions: read # Required by CodeQL
-  security-events: write # Required by CodeQL
 
 concurrency: # This is required to prevent multiple runs of the same workflow from running at the same time.
   group: ${{ github.workflow }}
